@@ -1,0 +1,21 @@
+<div class="order-item bg-gray-50 rounded-lg p-4 border border-gray-200">
+  <%= f.hidden_field :id %>
+  <%= f.hidden_field :_destroy, class: "destroy-field" %>
+  <div class="grid grid-cols-12 gap-3 items-end">
+    <div class="col-span-5">
+      <label class="block text-xs font-medium text-gray-600 mb-1">Description</label>
+      <%= f.text_field :description, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm", placeholder: "Item description", required: true %>
+    </div>
+    <div class="col-span-2">
+      <label class="block text-xs font-medium text-gray-600 mb-1">Qty</label>
+      <%= f.number_field :quantity, class: "qty-input w-full border border-gray-300 rounded-lg px-3 py-2 text-sm", value: f.object.quantity || 1, min: 0.01, step: 0.01, required: true %>
+    </div>
+    <div class="col-span-3">
+      <label class="block text-xs font-medium text-gray-600 mb-1">Unit Price</label>
+      <%= f.number_field :unit_price, class: "price-input w-full border border-gray-300 rounded-lg px-3 py-2 text-sm", value: f.object.unit_price || 0, min: 0, step: 0.01, required: true %>
+    </div>
+    <div class="col-span-2 flex justify-end">
+      <button type="button" class="remove-item text-red-400 hover:text-red-600 text-xs mt-4">Remove</button>
+    </div>
+  </div>
+</div>

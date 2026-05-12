@@ -1,0 +1,14 @@
+<% content_for :page_title, "Edit Customer" %>
+
+<div class="max-w-2xl">
+  <div class="flex items-center gap-4 mb-6">
+    <%= link_to seller_customer_path(@customer), class: "text-gray-400 hover:text-gray-600" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    <% end %>
+    <p class="text-gray-500 text-sm">Update customer information</p>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <%= render "form", customer: @customer %>
+  </div>
+</div>
