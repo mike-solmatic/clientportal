@@ -1,0 +1,85 @@
+<%= form_with model: [:seller, order], class: "space-y-6" do |f| %>
+  <%= render "shared/form_errors", object: order %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <%= f.label :customer_id, "Customer", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.collection_select :customer_id, @customers, :id, :name,
+          { prompt: "Select a customer" },
+          { class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" } %>
+    </div>
+    <div>
+      <%= f.label :due_date, class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.date_field :due_date, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :notes, class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_area :notes, rows: 2, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500", placeholder: "Order notes..." %>
+  </div>
+
+  <!-- Order Items -->
+  <div>
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="font-semibold text-gray-800">Order Items</h3>
+    </div>
+    <div id="order-items" class="space-y-3">
+      <%= f.fields_for :order_items do |item_form| %>
+        <%= render "order_item_fields", f: item_form %>
+      <% end %>
+    </div>
+    <button type="button" id="add-item-btn" class="mt-3 text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Add Item
+    </button>
+  </div>
+
+  <div class="flex gap-3 pt-2">
+    <%= f.submit order.new_record? ? "Create Order" : "Save Changes",
+        class: "bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg text-sm font-medium cursor-pointer" %>
+    <%= link_to "Cancel", seller_orders_path, class: "border border-gray-300 text-gray-700 px-6 py-2 rounded-lg text-sm hover:bg-gray-50" %>
+  </div>
+<% end %>
+
+<template id="order-item-template">
+  <div class="order-item bg-gray-50 rounded-lg p-4 border border-gray-200">
+    <div class="grid grid-cols-12 gap-3 items-end">
+      <div class="col-span-5">
+        <label class="block text-xs font-medium text-gray-600 mb-1">Description</label>
+        <input type="text" name="order[order_items_attributes][NEW_INDEX][description]"
+               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Item description" required>
+      </div>
+      <div class="col-span-2">
+        <label class="block text-xs font-medium text-gray-600 mb-1">Qty</label>
+        <input type="number" name="order[order_items_attributes][NEW_INDEX][quantity]"
+               class="qty-input w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="1" min="0.01" step="0.01" required>
+      </div>
+      <div class="col-span-3">
+        <label class="block text-xs font-medium text-gray-600 mb-1">Unit Price</label>
+        <input type="number" name="order[order_items_attributes][NEW_INDEX][unit_price]"
+               class="price-input w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value="0.00" min="0" step="0.01" required>
+      </div>
+      <div class="col-span-2 flex justify-end">
+        <button type="button" class="remove-item text-red-400 hover:text-red-600 text-xs mt-4">Remove</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+let itemIndex = document.querySelectorAll('.order-item').length;
+document.getElementById('add-item-btn').addEventListener('click', function() {
+  const template = document.getElementById('order-item-template').innerHTML.replace(/NEW_INDEX/g, itemIndex++);
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = template;
+  document.getElementById('order-items').appendChild(wrapper.firstElementChild);
+  attachRemoveHandlers();
+});
+function attachRemoveHandlers() {
+  document.querySelectorAll('.remove-item').forEach(btn => {
+    btn.onclick = () => btn.closest('.order-item').remove();
+  });
+}
+attachRemoveHandlers();
+</script>

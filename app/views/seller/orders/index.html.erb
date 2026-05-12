@@ -1,0 +1,78 @@
+<% content_for :page_title, "Orders" %>
+
+<div class="flex items-center justify-between mb-6">
+  <div class="flex gap-2 flex-wrap">
+    <%= link_to seller_orders_path, class: "px-3 py-1.5 rounded-lg text-sm font-medium #{params[:status].blank? ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:bg-gray-100'}" do %>
+      All <span class="ml-1 text-xs">(<%= @status_counts[:all] %>)</span>
+    <% end %>
+    <% [[:draft, "Draft"], [:pending, "Pending"], [:confirmed, "Confirmed"], [:paid, "Paid"], [:cancelled, "Cancelled"]].each do |key, label| %>
+      <%= link_to seller_orders_path(status: key), class: "px-3 py-1.5 rounded-lg text-sm font-medium #{params[:status] == key.to_s ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:bg-gray-100'}" do %>
+        <%= label %> <span class="ml-1 text-xs">(<%= @status_counts[key] %>)</span>
+      <% end %>
+    <% end %>
+  </div>
+  <%= link_to new_seller_order_path, class: "inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium" do %>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+    New Order
+  <% end %>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+  <% if @orders.empty? %>
+    <div class="py-16 text-center text-gray-400">
+      <svg class="w-16 h-16 mx-auto mb-4 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+      <p class="text-lg font-medium">No orders found</p>
+      <%= link_to "Create Order", new_seller_order_path, class: "mt-4 inline-block bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700" %>
+    </div>
+  <% else %>
+    <table class="w-full">
+      <thead class="bg-gray-50 border-b border-gray-200">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Order #</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Customer</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Date</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Due Date</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+          <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Total</th>
+          <th class="px-6 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <% @orders.each do |order| %>
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 text-sm font-mono font-medium text-gray-800"><%= order.order_number %></td>
+            <td class="px-6 py-4">
+              <div>
+                <p class="text-sm font-medium text-gray-800"><%= order.customer.name %></p>
+                <p class="text-xs text-gray-400"><%= order.customer.company_name %></p>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-500"><%= order.created_at.strftime("%b %d, %Y") %></td>
+            <td class="px-6 py-4 text-sm text-gray-500">
+              <% if order.due_date %>
+                <span class="<%= order.due_date < Date.current && !order.paid? ? 'text-red-600 font-medium' : '' %>">
+                  <%= order.due_date.strftime("%b %d, %Y") %>
+                </span>
+              <% else %>
+                <span class="text-gray-300">—</span>
+              <% end %>
+            </td>
+            <td class="px-6 py-4"><%= status_badge(order.status) %></td>
+            <td class="px-6 py-4 text-right">
+              <p class="text-sm font-semibold text-gray-800"><%= currency(order.total) %></p>
+              <% unless order.paid? || order.cancelled? %>
+                <p class="text-xs text-red-500">Due: <%= currency(order.amount_due) %></p>
+              <% end %>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <%= link_to "View", seller_order_path(order), class: "text-xs text-indigo-600 hover:text-indigo-800 font-medium" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <div class="px-6 py-4 border-t border-gray-100">
+      <%== pagy_nav(@pagy) %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,57 @@
+<% content_for :page_title, "Products" %>
+
+<div class="flex items-center justify-between mb-6">
+  <p class="text-gray-500 text-sm">Your product catalog for quick order entry</p>
+  <%= link_to new_seller_product_path, class: "inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium" do %>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+    New Product
+  <% end %>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+  <% if @products.empty? %>
+    <div class="py-16 text-center text-gray-400">
+      <svg class="w-16 h-16 mx-auto mb-4 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      <p class="text-lg font-medium">No products yet</p>
+    </div>
+  <% else %>
+    <table class="w-full">
+      <thead class="bg-gray-50 border-b border-gray-200">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Name</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Description</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Unit</th>
+          <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Price</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+          <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <% @products.each do |product| %>
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 font-medium text-gray-800 text-sm"><%= product.name %></td>
+            <td class="px-6 py-4 text-sm text-gray-500"><%= truncate(product.description, length: 60) %></td>
+            <td class="px-6 py-4 text-sm text-gray-500"><%= product.unit %></td>
+            <td class="px-6 py-4 text-sm font-semibold text-gray-800 text-right"><%= currency(product.price) %></td>
+            <td class="px-6 py-4">
+              <% if product.active? %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Active</span>
+              <% else %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Inactive</span>
+              <% end %>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <div class="flex items-center justify-end gap-2">
+                <%= link_to "Edit", edit_seller_product_path(product), class: "text-xs text-indigo-600 hover:text-indigo-800 font-medium" %>
+                <%= link_to "Delete", seller_product_path(product), data: { "turbo-method": :delete, "turbo-confirm": "Delete this product?" }, class: "text-xs text-red-500 hover:text-red-700 font-medium" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <div class="px-6 py-4 border-t border-gray-100">
+      <%== pagy_nav(@pagy) %>
+    </div>
+  <% end %>
+</div>

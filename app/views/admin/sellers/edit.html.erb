@@ -1,0 +1,37 @@
+<% content_for :page_title, "Edit Seller" %>
+<div class="max-w-xl">
+  <div class="flex items-center gap-4 mb-6">
+    <%= link_to admin_seller_path(@seller), class: "text-gray-400 hover:text-gray-600" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    <% end %>
+  </div>
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <%= form_with model: [:admin, @seller], url: admin_seller_path(@seller), method: :patch, class: "space-y-4" do |f| %>
+      <%= render "shared/form_errors", object: @seller %>
+      <div>
+        <%= f.label :name, class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.text_field :name, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :email, class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.email_field :email, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :company_name, class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.text_field :company_name, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" %>
+      </div>
+      <div>
+        <%= f.label :phone, class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.text_field :phone, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" %>
+      </div>
+      <div class="flex items-center gap-2">
+        <%= f.check_box :active, class: "h-4 w-4 text-purple-600 border-gray-300 rounded" %>
+        <%= f.label :active, "Active account", class: "text-sm text-gray-700" %>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <%= f.submit "Save Changes", class: "bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg text-sm font-medium cursor-pointer" %>
+        <%= link_to "Cancel", admin_seller_path(@seller), class: "border border-gray-300 text-gray-700 px-6 py-2 rounded-lg text-sm hover:bg-gray-50" %>
+      </div>
+    <% end %>
+  </div>
+</div>

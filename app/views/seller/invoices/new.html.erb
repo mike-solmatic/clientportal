@@ -1,0 +1,32 @@
+<% content_for :page_title, "Create Invoice" %>
+
+<div class="max-w-lg">
+  <div class="flex items-center gap-4 mb-6">
+    <%= link_to seller_order_path(@order), class: "text-gray-400 hover:text-gray-600" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    <% end %>
+    <p class="text-gray-500 text-sm">Generate an invoice for order <%= @order.order_number %></p>
+  </div>
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div class="mb-6 p-4 bg-indigo-50 rounded-lg">
+      <p class="text-sm text-indigo-700 font-medium">Order Total: <%= currency(@order.total) %></p>
+      <p class="text-xs text-indigo-500 mt-1">Customer: <%= @order.customer.name %></p>
+    </div>
+    <%= form_with model: [:seller, @order, @invoice] do |f| %>
+      <div class="space-y-4">
+        <div>
+          <%= f.label :due_date, class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.date_field :due_date, value: 30.days.from_now.to_date, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <%= f.label :notes, class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_area :notes, rows: 3, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500", placeholder: "Payment terms, bank details, etc." %>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <%= f.submit "Create Invoice", class: "bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg text-sm font-medium cursor-pointer" %>
+        <%= link_to "Cancel", seller_order_path(@order), class: "border border-gray-300 text-gray-700 px-6 py-2 rounded-lg text-sm hover:bg-gray-50" %>
+      </div>
+    <% end %>
+  </div>
+</div>
